@@ -1,0 +1,19 @@
+{
+  "name": "moview-recommendation-system-using-mern",
+  "version": "1.0.0",
+  "description": "Read-me",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/San-kalp/Moview-Recommendation-System-using-MERN.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/San-kalp/Moview-Recommendation-System-using-MERN/issues"
+  },
+  "homepage": "https://github.com/San-kalp/Moview-Recommendation-System-using-MERN#readme"
+}
