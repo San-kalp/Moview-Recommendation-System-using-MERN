@@ -5,9 +5,9 @@
 <br>
 <h3 align="left">Team Members:</h3>
     <div align="center">
-        <table style="width: 50%; border-style: solid; border-color: #2c9dce; border-wifth: 1px">
+        <table style="width: 70%; border-style: solid; border-color: #2c9dce; border-wifth: 1px">
             <tr>
-                <th>Company</th>
+                <th>Group Members</th>
             </tr>
              <tr>
                 <td>Sankalp Chordia</td>
