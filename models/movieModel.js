@@ -38,6 +38,10 @@ const movieModel = mongoose.Schema({
   description: {
     type: String,
     max:3000,
+  },
+  rating: {
+    type: String,
+    default: "0",
   }
 });
 
