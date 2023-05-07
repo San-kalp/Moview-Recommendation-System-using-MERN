@@ -51,9 +51,16 @@ exports.rateMovie = async (req, res) => {
     const { movie_id, rating } = req.body;
     const user_id = req.user._id.toString();
 
-    // update movie db
-    // also need to write logic for rating system
-    await movieModel.findOneAndUpdate({_id: movie_id}, {$set: {rating}});
+    // calculate the average of ratings of movie_id
+    const ratingData = await ratingModel.find({ movie_id });
+    let total = 0, count = 0;
+    ratingData.map((data) => {
+      total += parseInt(data.rating)
+      count++;
+    })
+
+    // update the db with average of ratings
+    await movieModel.findOneAndUpdate({ _id: movie_id }, { $set: { rating: total / count } });
 
     // if data present then update it
     const data = await ratingModel.findOne({ movie_id, user_id });
@@ -98,6 +105,7 @@ exports.rateMovie = async (req, res) => {
 exports.getHighRatedMovies = async (req, res) => {
   try {
     const result = await movieModel.find().sort({ rating: -1 });
+
     if (result) {
       return res.status(200).json({ status: true, data: result });
     } else {
