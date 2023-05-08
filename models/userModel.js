@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 
 const user = mongoose.Schema(
   {
-    u_name: {
-      type: String,
-      default: "Enter your name",
-    },
     u_email: {
       type: String,
       required: [true, "Please add your email"],

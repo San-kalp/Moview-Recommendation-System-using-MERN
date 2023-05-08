@@ -1,6 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middlewares/auth");
+const fileUpload = require("express-fileupload");
+
+router.use(
+    fileUpload({
+      useTempFiles: true,
+    })
+  );
 
 const movieController = require("../controller/movieController");
 

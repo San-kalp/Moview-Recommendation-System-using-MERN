@@ -38,7 +38,6 @@ exports.signup = async (req, res) => {
     }
 
     const data = await userModel.create({
-      u_name: "",
       u_email: u_email,
       u_password: u_password,
     });

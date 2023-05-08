@@ -1,10 +1,21 @@
 const movieModel = require("../models/movieModel");
 const ratingModel = require("../models/ratingModel");
+const cloudinary = require("cloudinary").v2;
+
+// image upload configuration
+cloudinary.config({
+  cloud_name: "duwbwdwqc",
+  api_key: "723896973772636",
+  api_secret: "srE4voWKjc8uQ8MnR4BXXqDecgY",
+});
 
 exports.addMovie = async (req, res) => {
   try {
+    if (!req.files) {
+      return res.status(400).json({ status: false, message: "File not found" });
+    }
+
     const movie_name = req.body.movie_name;
-    const poster = "";
     const director = req.body.director;
     const writer = req.body.writer;
     const budget = req.body.budget;
@@ -13,33 +24,48 @@ exports.addMovie = async (req, res) => {
     const duration = req.body.duration;
     const awards = req.body.awards;
     const genere = req.body.genere;
-    const cast = req.body.cast;
+    const cast = JSON.parse(req.body.cast);
     const description = req.body.description;
 
-    const result = await movieModel.create({
-      movie_name,
-      poster,
-      director,
-      writer,
-      budget,
-      box_collection,
-      release_date,
-      duration,
-      awards,
-      genere,
-      cast,
-      description,
-    });
+    const image = req.files.image;
+    const path = image.tempFilePath;
 
-    if (result) {
-      return res
-        .status(200)
-        .json({ status: true, message: "Movie added successfully" });
-    } else {
-      return res
-        .status(400)
-        .json({ status: false, message: "Some error occuredd" });
-    }
+    console.log(box_collection);
+    console.log(cast);
+
+    cloudinary.uploader.upload(path, async (err, result) => {
+      if (err) {
+        return res
+          .status(200)
+          .json({ message: "Some error occured while uploading file" });
+      }
+
+      const url = result.url;
+      const r = await movieModel.create({
+        movie_name,
+        poster: url,
+        director,
+        writer,
+        budget,
+        box_collection,
+        release_date,
+        duration,
+        awards,
+        genere,
+        cast,
+        description,
+      });
+
+      if (r) {
+        return res
+          .status(200)
+          .json({ status: true, message: "Movie added successfully" });
+      } else {
+        return res
+          .status(400)
+          .json({ status: false, message: "Some error occuredd" });
+      }
+    });
   } catch (e) {
     console.log(e.message);
     return res.status(500).json({ message: "Some error occured" });
@@ -50,17 +76,6 @@ exports.rateMovie = async (req, res) => {
   try {
     const { movie_id, rating } = req.body;
     const user_id = req.user._id.toString();
-
-    // calculate the average of ratings of movie_id
-    const ratingData = await ratingModel.find({ movie_id });
-    let total = 0, count = 0;
-    ratingData.map((data) => {
-      total += parseInt(data.rating)
-      count++;
-    })
-
-    // update the db with average of ratings
-    await movieModel.findOneAndUpdate({ _id: movie_id }, { $set: { rating: total / count } });
 
     // if data present then update it
     const data = await ratingModel.findOne({ movie_id, user_id });
@@ -73,12 +88,24 @@ exports.rateMovie = async (req, res) => {
           },
         }
       );
-      if (result) {
-        return res
-          .status(200)
-          .json({ status: true, message: "Rating added successfully" });
+      // calculate the average of ratings of movie_id
+      const ratingData = await ratingModel.find({ movie_id });
+      let total = 0,
+        count = 0;
+
+      ratingData.map((data) => {
+        total += parseInt(data.rating);
+        count++;
+      });
+      // update the db with average of ratings
+      const update = await movieModel.findOneAndUpdate(
+        { _id: movie_id },
+        { $set: { rating: total / count } }
+      );
+      if (update) {
+        return res.status(200).json({ status: true, message: "Rating added successfully" });
       } else {
-        return res.status(400).json({ message: "Some error occured" });
+        return res.status(400).json({ status: false,message: "Rating not added successfully" });
       }
     }
 
@@ -89,6 +116,22 @@ exports.rateMovie = async (req, res) => {
       rating,
     });
 
+    // calculate the average of ratings of movie_id
+    const ratingData = await ratingModel.find({ movie_id });
+    let total = 0,
+      count = 0;
+
+    ratingData.map((data) => {
+      total += parseInt(data.rating);
+      count++;
+    });
+    // update the db with average of ratings
+    const update = await movieModel.findOneAndUpdate(
+      { _id: movie_id },
+      { $set: { rating: total / count } }
+    );
+
+    //---
     if (result) {
       return res
         .status(200)
